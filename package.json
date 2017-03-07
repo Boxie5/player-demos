@@ -1,0 +1,24 @@
+{
+  "name": "player-demos",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm-run-all build:clean build:css build:vendor build:basic-mp4",
+    "build:clean": "find ./dist -type f -mindepth 1 -delete",
+    "build:vendor": "cp -r ./vendor/* ./dist/vendor/",
+    "build:css": "cp -r ./src/css/* ./dist/css",
+    "build:basic-mp4": "cp -r ./src/basic-mp4/* ./dist/basic-mp4",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Boxie5/player-demos.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Boxie5/player-demos/issues"
+  },
+  "homepage": "https://github.com/Boxie5/player-demos#readme"
+}

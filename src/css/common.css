@@ -1,0 +1,22 @@
+body {
+  background-color: #fff;
+}
+
+.video-wrapper {
+  margin-top: 50px;
+}
+
+.video-sample{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.editor-wrapper {
+  margin-top: 50px;
+}
+
+.editor {
+  width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
