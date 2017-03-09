@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>七牛web播放器示例-试看</title>
+  <!-- <link rel="stylesheet" href="https://player.qiniucc.com/sdk/latest/qiniuplayer.min.css" />
+  <script type="text/javascript" src="https://player.qiniucc.com/sdk/latest/qiniuplayer.min.js"></script> -->
+  <link rel="stylesheet" href="http://192.168.201.49:63024/qiniuplayer.min.css" />
+  <script type="text/javascript" src="http://192.168.201.49:63024/qiniuplayer.min.js"></script>
+
+  <link rel="stylesheet" href="/vendor/css/codemirror.css"/>
+  <script type="text/javascript" src="/vendor/js/codemirror.js"></script>
+
+  <link rel="stylesheet" href="/css/common.css"/>
+</head>
+<body>
+  <div class="video-wrapper">
+    <video id="sample-video" class="video-sample video-js vjs-big-play-centered" width="640" height="360">
+    </video>
+  </div>
+  <div class="editor-wrapper">
+    <div id="editor" class="editor"></div>
+  </div>
+  <div id="login-mask" class="login-mask">
+    <button class="login-btn" onclick="login();">登陆</button>
+  </div>
+  <style>
+  .login-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    background-color: rgba(0,0,0,.7);
+    z-index: 10;
+  }
+  .login-mask .login-btn {
+    position: relative;
+    background-color: #2ad59d;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    top: 45%;
+    left: 50%;
+    width: 140px;
+    margin-left: -70px;
+    color: #fff;
+    font-size: 18px;
+    height: 40px;
+    line-height: 40px;
+  }
+  .login-mask .login-btn:hover {
+    background-color: #24b183;
+  }
+  .login-mask .login-btn:active {
+    background-color: #22a177;
+  }
+  </style>
+  <script>
+    function login() {
+      localStorage['isLogin'] = "true";
+      location.reload();
+    }
+
+    function isLogin() {
+      return localStorage['isLogin'] !== "true";
+    }
+
+    var loginShowing = false;
+
+    function showLogin() {
+      if (!loginShowing) {
+        loginShowing = true;
+        var mask = document.getElementById("login-mask");
+        mask.style.display = "block";
+      }
+    }
+  </script>
+  <script id="js-content">
+var player = new Jedi.Video.FenixPlayer('sample-video', {
+  'file': 'http://ofc5eoi9z.cvoda.com/eGl4aTpBY3Rpb24gTW92aWVzIDIwMTYgRnVsbCBNb3ZpZSBFbmdsaXNoICAgS3VuZyBGdSBIZXJvIE1vdmllICAgTmV3IEJlc3QgQWN0aW9uIE1vdmllcy5tcDQ=_q00020001.m3u8?ver=1488510571',
+  'type': 'hls',
+  'autoplay': true,
+  'controls': true
+});
+
+function checkLogin(event) {
+    // 您可以自己实现`isLogin`和`showLogin`的业务代码
+    if (isLogin() && player.currentTime() > 300) {
+        player.pause();
+        player.controls(false);
+        showLogin();
+    }
+}
+
+player.on('timeupdate', checkLogin);
+player.on('seeking', checkLogin);
+  </script>
+  <script>
+    var value = document.getElementById("js-content").innerHTML;
+    var editor = CodeMirror(document.getElementById("editor"), {
+      value: value,
+      lineNumbers: true,
+      mode: "javascript",
+      theme: "monokai",
+      tabSize: 2,
+      readOnly: "nocursor",
+      scrollbarStyle: "overlay"
+    });
+  </script>
+</body>
+</html>

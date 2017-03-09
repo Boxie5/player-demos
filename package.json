@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm-run-all build:clean build:css build:vendor build:basic-mp4",
+    "build": "npm-run-all build:clean build:css build:vendor build:basic-mp4 build:trial",
     "build:clean": "find ./dist -type f -mindepth 1 -delete",
     "build:vendor": "cp -r ./vendor/* ./dist/vendor/",
     "build:css": "cp -r ./src/css/* ./dist/css",
     "build:basic-mp4": "cp -r ./src/basic-mp4/* ./dist/basic-mp4",
+    "build:trial": "cp -r ./src/trial/* ./dist/trial",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
