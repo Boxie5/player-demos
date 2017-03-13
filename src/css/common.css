@@ -1,5 +1,6 @@
 body {
   background-color: #fff;
+  overflow: auto;
 }
 
 .video-wrapper {
@@ -13,6 +14,7 @@ body {
 
 .editor-wrapper {
   margin-top: 50px;
+  margin-bottom: 100px;
 }
 
 .editor {

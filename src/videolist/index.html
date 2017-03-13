@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>七牛web播放器示例-试看</title>
+  <!-- <link rel="stylesheet" href="https://player.qiniucc.com/sdk/latest/qiniuplayer.min.css" />
+  <script type="text/javascript" src="https://player.qiniucc.com/sdk/latest/qiniuplayer.min.js"></script> -->
+  <link rel="stylesheet" href="http://192.168.201.49:63024/qiniuplayer.min.css" />
+  <script type="text/javascript" src="http://192.168.201.49:63024/qiniuplayer.min.js"></script>
+
+  <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script type="text/javascript" src="http://7xitwn.com1.z0.glb.clouddn.com/jquery.scrollTo.min.js"></script>
+
+  <link rel="stylesheet" href="/vendor/css/codemirror.css"/>
+  <script type="text/javascript" src="/vendor/js/codemirror.js"></script>
+
+  <link rel="stylesheet" href="/css/common.css"/>
+  <style>
+  .phone-wrapper {
+    position: relative;
+    width: 383px;
+    height: 724px;
+    background-image: url('/image/iphone.png');
+    background-size: cover;
+  }
+
+  .video-list-wrap{
+    position: absolute;
+    top: 96px;
+    left: 50px;
+    width: 284px;
+    height: 505px;
+    overflow: auto;
+    background-color: #fff;
+  }
+
+  .video-list-wrap::-webkit-scrollbar{
+    display: none;
+  }
+
+  .video-list-wrap .video-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  </style>
+  <style id="css-content">
+.video-list-item {
+  position: relative;
+}
+.video-list video::-webkit-media-controls-overlay-enclosure, .video-list video::-webkit-media-controls-enclosure{
+  display: none;
+}
+.video-active video::-webkit-media-controls-overlay-enclosure, .video-active video::-webkit-media-controls-enclosure{
+  display: block;
+}
+.item-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: none;
+  z-index: 100;
+}
+.video-list.playing .item-mask {
+  display: block;
+}
+.video-list .video-list-item.video-active .item-mask {
+  display: none;
+}
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <div class="video-list-wrap">
+      <ul class="video-list" id="list"></ul>
+    </div>
+  </div>
+  <div class="editor-wrapper">
+    <div id="js-editor" class="editor"></div>
+  </div>
+  <div class="editor-wrapper">
+    <div id="css-editor" class="editor"></div>
+  </div>
+  <script id="js-content">
+// 本例中使用jquery和jquery.scrollTo插件
+
+var playlist = [
+  {
+    "file": "http://ofc5eoi9z.cvoda.com/eGl4aTpzZWdtZW50MC5tcDQ=_q00020001.m3u8?ver=1489061061",
+    "type": "m3u8",
+    "poster": "http://ofc5eoi9z.cvoda.com/eGl4aTpzZWdtZW50MC5tcDQ=_thumbnails_000001.jpg"
+  },
+  {
+    "file": "http://ofc5eoi9z.cvoda.com/eGl4aTpzZWdtZW50MS5tcDQ=_q00020001.m3u8?ver=1489061061",
+    "type": "m3u8",
+    "poster": "http://ofc5eoi9z.cvoda.com/eGl4aTpzZWdtZW50MS5tcDQ=_thumbnails_000001.jpg"
+  },
+  {
+    "file": "http://ofc5eoi9z.cvoda.com/eGl4aTpzZWdtZW50Mi5tcDQ=_q00020001.m3u8?ver=1489061061",
+    "type": "m3u8",
+    "poster": "http://ofc5eoi9z.cvoda.com/eGl4aTpzZWdtZW50Mi5tcDQ=_thumbnails_000001.jpg"
+  },
+  {
+    "file": "http://ofc5eoi9z.cvoda.com/eGl4aTpzZWdtZW50My5tcDQ=_q00020001.m3u8?ver=1489061061",
+    "type": "m3u8",
+    "poster": "http://ofc5eoi9z.cvoda.com/eGl4aTpzZWdtZW50My5tcDQ=_thumbnails_000001.jpg"
+  },
+  {
+    "file": "http://ofc5eoi9z.cvoda.com/eGl4aTpzZWdtZW50NC5tcDQ=_q00020001.m3u8?ver=1489061061",
+    "type": "m3u8",
+    "poster": "http://ofc5eoi9z.cvoda.com/eGl4aTpzZWdtZW50NC5tcDQ=_thumbnails_000001.jpg"
+  }
+];
+
+var players = [];
+
+playlist.map(function(data, index) {
+  var item = $('<div id="item-' + (index + 1) + '" class="video-list-item">'
+            + '<div>'
+            + '<video width="284" height="158"'
+            + ' class="video-sample video-js vjs-big-play-centered"'
+            + ' id="video-item-' + (index+1) + '"'
+            + ' preload="none" >'
+            + '</video>'
+            + '</div>'
+            + '<div class="item-mask"></div>'
+            + '</div>');
+  $("#list").append(item);
+
+  item.on('click', function() {
+    if (!$(item).hasClass("video-active")) {
+      players.map(function(item, p_index) {
+        if (p_index != index) {
+          if ($("#item-" + (p_index + 1)).hasClass("video-active")) {
+            item.pause();
+            $("#item-" + (p_index + 1)).removeClass("video-active");
+            item.showPlayButton();
+            item.currentTime(0);
+          }
+        } else {
+          item.play();
+        }
+      });
+    }
+  });
+
+  data.controls = true;
+  data.nativeControlsForTouch = true;
+
+  var player = new Jedi.Video.FenixPlayer("video-item-" + (index + 1), data);
+  players.push(player);
+
+  player.on("play", function() {
+    $("#item-" + (index + 1)).addClass("video-active");
+    $("#list").addClass("playing");
+
+    var cellHeight = $("#item-" + (index + 1)).height();
+    $(".video-list-wrap").scrollTo($("#item-" + (index + 1)).offset().top - $(".video-list").offset().top, 800);
+  });
+  player.on("ended", function() {
+    setTimeout(function() {
+      $("#item-" + (index + 1)).removeClass("video-active");
+      player.showPlayButton();
+
+      if (players[index + 1]) {
+        players[index + 1].play();
+      }
+    }, 300);
+  });
+});
+  </script>
+  <script>
+    CodeMirror(document.getElementById("js-editor"), {
+      value: document.getElementById("js-content").innerHTML,
+      lineNumbers: true,
+      mode: "javascript",
+      theme: "monokai",
+      tabSize: 2,
+      readOnly: "nocursor",
+      scrollbarStyle: "overlay"
+    });
+    CodeMirror(document.getElementById("css-editor"), {
+      value: document.getElementById("css-content").innerHTML,
+      lineNumbers: true,
+      mode: "css",
+      theme: "monokai",
+      tabSize: 2,
+      readOnly: "nocursor",
+      scrollbarStyle: "overlay"
+    });
+  </script>
+</body>
+</html>
