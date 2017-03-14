@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>七牛web播放器示例-自适应hls</title>
+  <link rel="stylesheet" href="http://192.168.201.49:63024/qiniuplayer.min.css" />
+  <script type="text/javascript" src="http://192.168.201.49:63024/qiniuplayer.min.js"></script>
+
+  <link rel="stylesheet" href="/vendor/css/codemirror.css"/>
+  <script type="text/javascript" src="/vendor/js/codemirror.js"></script>
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+
+  <link rel="stylesheet" href="/css/common.css"/>
+  <style>
+  .highcharts-credits {
+    display: none;
+  }
+  </style>
+</head>
+<body>
+  <div class="video-wrapper">
+    <video id="sample-video" class="video-sample video-js vjs-big-play-centered" width="640" height="360">
+    </video>
+  </div>
+  <div id="chart-container"></div>
+  <div class="editor-wrapper">
+    <div id="editor" class="editor"></div>
+  </div>
+  <script id="js-content">
+var player = new Jedi.Video.FenixPlayer('sample-video', {
+  file: 'http://ofc5eoi9z.cvoda.com/eGl4aTp0cmFpbi5tcDQ=_q00000001.m3u8?ver=1489405910',
+  type: 'hls',
+  controls: true
+});
+  </script>
+  <script>
+  var vjsPlayer = player.videoPlayer;
+  vjsPlayer.ready(function() {
+    var loader = vjsPlayer.tech_.hls.masterPlaylistController_.mainSegmentLoader_;
+    loader.on("progress", function(data) {
+
+      if (data.target && data.target.readyState && data.target.readyState == 4) {
+        var bandwidth = loader.bandwidth;
+        var item = {
+          'bandwidth': bandwidth,
+          'level': vjsPlayer.qualityLevels().selectedIndex
+        };
+
+        console.log(item);
+
+        addPoint(item);
+      }
+    });
+  });
+
+  var chart = initCharts();
+
+  function initCharts() {
+    return Highcharts.chart('chart-container', {
+
+        title: {
+            text: 'ts分片下载带宽与播放清晰度示意图'
+        },
+
+        xAxis: {
+          max: 30,
+          min: 0,
+          tickInterval: 1
+        },
+
+        yAxis: [{ // left y axis
+            title: {
+                text: '下载带宽(Mb/s)'
+            },
+            labels: {
+                align: 'left',
+                x: 3,
+                y: 16,
+                format: '{value:.,0f}',
+                step: 0.25
+            },
+            min: 0,
+            showFirstLabel: false
+        }, { // right y axis
+            linkedTo: 0,
+            gridLineWidth: 0,
+            opposite: true,
+            title: {
+                text: '清晰度等级'
+            },
+            labels: {
+                align: 'right',
+                x: -3,
+                y: 16,
+                formatter: function() {
+                  return {
+                    0.5: "标清",
+                    1: "高清",
+                    1.5: "超清"
+                  }[this.value] || "";
+                }
+            },
+            showFirstLabel: false
+        }],
+
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
+        },
+
+        plotOptions: {
+            series: {
+                pointStart: 0
+            }
+        },
+
+        tooltip: {
+          formatter: function() {
+            var content = '';
+            if (this.series.name === '下载带宽') {
+              content = this.y + "Mb/s";
+            } else {
+              content = {0.5: "标清", 1: "高清", 1.5: "超清"}[this.y];
+            }
+            return '<b>' + this.x + '</b><br/>' + this.series.name + ':' + content || '未知';
+          }
+        },
+
+        series: [{
+          label: 'bandwidth',
+          name: '下载带宽',
+          data: []
+        }, {
+          label: 'level',
+          name: '清晰度等级',
+          data: []
+        }]
+    });
+  }
+
+  function addPoint(data) {
+    chart.series[0].addPoint(Math.round(data.bandwidth * 100 / (8 * 1024 * 1024)) / 100);
+    chart.series[1].addPoint(data.level * 0.5 + 0.5);
+  }
+  </script>
+  <script>
+    var editor = CodeMirror(document.getElementById("editor"), {
+      value: document.getElementById("js-content").innerHTML,
+      lineNumbers: true,
+      mode: "javascript",
+      theme: "monokai",
+      tabSize: 2,
+      readOnly: "nocursor"
+    });
+  </script>
+</body>
+</html>

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm-run-all build:clean build:css build:image build:vendor build:basic-mp4 build:trial build:videolist",
+    "build": "npm-run-all build:clean build:css build:image build:vendor build:basic-mp4 build:trial build:videolist build:autohls",
     "build:clean": "find ./dist -type f -mindepth 1 -delete",
     "build:vendor": "cp -r ./vendor/* ./dist/vendor/",
     "build:css": "cp -r ./src/css/* ./dist/css",
@@ -12,6 +12,7 @@
     "build:basic-mp4": "cp -r ./src/basic-mp4/* ./dist/basic-mp4",
     "build:trial": "cp -r ./src/trial/* ./dist/trial",
     "build:videolist": "cp -r ./src/videolist/* ./dist/videolist",
+    "build:autohls": "cp -r ./src/autohls/* ./dist/autohls",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
